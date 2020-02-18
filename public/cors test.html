@@ -1,0 +1,116 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        //const url = `http://tweetsaver.herokuapp.com/?q=obama&callback=yourJSONPCallbackFn&count=10`
+        const url = `http://tweetsaver.herokuapp.com/?q=obama&count=5`
+        function Fetch() {
+            //-------------------------------------------
+            // get real data (currently experiencing cross-origin error)
+            //-------------------------------------------    
+            console.log('execSearch: ' + url);
+
+            // this fetch uses a CORS proxy
+            // source:  https://stackoverflow.com/questions/43262121/trying-to-use-fetch-and-pass-in-mode-no-cors
+            // var proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+            // fetch(proxyUrl + url)
+            //     .then(blob => blob.json())
+            //     .then(data => {
+            //         //console.table(data);
+            //         //console.log(JSON.stringify(data, null, 2));
+            //         const tweets = data.tweets.map((tweet) => {
+            //             //console.log(tweet.text);
+            //             return {
+            //                 text: tweet.text
+            //             }
+            //         });
+            //         console.log(tweets);
+            //         this.setState({ searchTweets: tweets });
+            //     })
+            //     .catch(e => {
+            //         console.log(e);
+            //         return e;
+            //     });
+            // return
+
+            //fetch(url, { mode: 'no-cors' }) //DOUG_TODO:  THIS BYPASSES THE CORS PROBLEM BUT THE RESULT IS STILL EMPTY
+            fetch(url) //DOUG_TODO:  THIS BYPASSES THE CORS PROBLEM BUT THE RESULT IS STILL EMPTY
+                .then(response => {
+                    //console.log('cp1: response' + response.json());
+                    response.set('Access-Control-Allow-Origin', '*');
+                    console.log('cp1: response' + response);
+                    response.json()
+                    console.log('cp2');
+                })
+                .then(
+                    (data) => {
+                        console.table(data);
+                    }
+                )
+                .catch((error) => {
+                    alert('fetch error:' + error);
+                })
+        }
+        function Fetch2() {
+            console.log('Fetch2');
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            //xhr.setRequestHeader("Accept", "text/xml");
+            xhr.setRequestHeader("Content-Type", "application/json"); //"text/plain"
+            //xhr.setRequestHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+            //xhr.setRequestHeader("Access-Control-Allow-Origin", url);
+            //xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+            xhr.onreadystatechange = someHandler;
+            xhr.send(); 
+        }
+        function Fetch3() {
+            // THIS FETCH WORKS!!!!!!!
+            // source:  https://gist.github.com/jesperorb/6ca596217c8dfba237744966c2b5ab1e
+            $.ajax({
+                method: 'GET',
+                url: url,
+                dataType: 'jsonp', //change the datatype to 'jsonp' works in most cases
+                success: (res) => {
+                    console.log(typeof res);
+                    console.log(res);
+                }
+            })
+        }
+        function someHandler(data) {
+            alert('someHandler:' + data);
+        }
+    </script>
+
+<script type="text/javascript">
+    // jQuery cross domain ajax
+   
+    
+    // using XMLHttpRequest
+    // var xhr = new XMLHttpRequest();
+    // xhr.open("GET", "http://www.example.org/ajax.php", true);
+    // xhr.onload = function () {
+    //     console.log(xhr.responseText);
+    // };
+    // xhr.send();
+    
+    // using the Fetch API
+    // fetch("http://www.example.org/ajax.php").then(function (response) {
+    //     return response.json();
+    // }).then(function (json) {
+    //     console.log(json);
+    // });
+    </script>
+
+</head>
+
+<body>
+    <div id="url"></div>
+    <button onclick="Fetch()">Fetch</button>
+    <button onclick="Fetch2()">Fetch2</button>
+    <button onclick="Fetch3()">Fetch3</button>
+    <script>
+        document.getElementById('url').innerText = url;
+    </script>
+</body>
+
+</html>
