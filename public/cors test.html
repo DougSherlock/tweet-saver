@@ -2,7 +2,7 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
-        //const url = `http://tweetsaver.herokuapp.com/?q=obama&callback=yourJSONPCallbackFn&count=10`
+        const urlJsonp = `http://tweetsaver.herokuapp.com/?q=obama&callback=globalJSONPCallbackFn&count=10`
         const url = `http://tweetsaver.herokuapp.com/?q=obama&count=5`
         function Fetch() {
             //-------------------------------------------
@@ -107,10 +107,66 @@
     <div id="url"></div>
     <button onclick="Fetch()">Fetch</button>
     <button onclick="Fetch2()">Fetch2</button>
-    <button onclick="Fetch3()">Fetch3</button>
+    <button onclick="Fetch3()">Ajax JSONP</button>
     <script>
         document.getElementById('url').innerText = url;
     </script>
+
+    <button onclick="clickButton()">Click me!</button>
+
+    <p id="demo"></p>
+    
+    <script>
+    function clickButton() {
+      var s = document.createElement("script");
+      s.src = urlJsonp;
+      document.body.appendChild(s);
+    }
+
+    function globalJSONPCallbackFn(data) {
+        console.log('globalJSONPCallbackFn started')
+        /*
+        const tweets = data.tweets.map((tweet) => {
+            return { 
+                text: tweet.text,
+                user: tweet.user.name,
+                time: tweet.createdAt
+            }
+        });
+      document.getElementById("demo").innerHTML = JSON.stringify(tweets);
+      */
+      console.log('globalJSONPCallbackFn started')
+    }
+
+    class MyClass {
+        name = 'Unknown';
+        constructor(pName) {
+            name = pName;
+            globalJSONPCallbackFn = this.myJSONPCallbackFn;
+        }
+        myJSONPCallbackFn = (data) => {
+            console.log('MyClass.myJSONPCallbackFn['+name+'] started')
+            const tweets = data.tweets.map((tweet) => {
+                return { 
+                    text: tweet.text,
+                    user: tweet.user.name,
+                    time: tweet.createdAt
+                }
+            });
+
+            const html = tweets.map((tweet) => {
+                return '<div>' + tweet.text + '</div><div>@' + tweet.user + '</div><hr/>';
+            });
+
+          //document.getElementById("demo").innerHTML = JSON.stringify(tweets);
+          document.getElementById("demo").innerHTML = html;
+          console.log('MyClass.myJSONPCallbackFn['+name+'] done')
+        }
+    }
+
+    const myObj = new MyClass('Bob');
+</script>
+    
 </body>
 
 </html>
